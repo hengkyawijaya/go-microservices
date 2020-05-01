@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-svc
+  namespace: go-microservices
+spec:
+  selector:
+    role: app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8091
+      nodePort: 32091
+  type: NodePort
