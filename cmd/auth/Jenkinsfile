@@ -5,7 +5,9 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                sh 'go --version'
+                bash '''#!/bin/bash
+                 go --version 
+                '''
             }
         }
     }
