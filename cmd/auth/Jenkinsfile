@@ -1,10 +1,31 @@
 pipeline {
-   agent any
-   environment {
+    agent any
+    environment {
        registry = "go-microservice/auth"
        GOCACHE = "/tmp"
    }
-   stages {
+    parameters {
+        string(name: 'KUBE_PROD_NAMESPACE',         description: 'Kubernetes Production Namespace',     defaultValue: 'go-microservice')
+        string(name: 'DOCKER_PROD_REGISTRY_URL',    description: 'docker Production registry',          defaultValue: 'registry')
+    }
+
+    options {
+        skipDefaultCheckout()
+    }
+    stages {
+        stage('Checkout SCM') {
+            agent any
+            steps {
+                checkout scm
+                script {
+                    echo "get COMMIT_ID"
+                    sh 'echo -n $(git rev-parse --short HEAD) > ./commit-id'
+                    commitId = readFile('./commit-id')
+                }
+                stash(name: 'ws', includes:'**,./commit-id')
+            }
+        }
+
        stage('Build') {
            agent {
                docker {
